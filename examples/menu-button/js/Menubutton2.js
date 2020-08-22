@@ -7,6 +7,8 @@
 *   Desc:   Menubutton Menuitem widget that implements ARIA Authoring Practices
 */
 
+'use strict';
+
 /*
 *   @constructor MenubuttonItem
 *
@@ -75,9 +77,7 @@ Menubutton.prototype.init = function () {
 };
 
 Menubutton.prototype.handleKeydown = function (event) {
-  var tgt = event.currentTarget,
-    flag = false,
-    clickEvent;
+  var flag = false;
 
   switch (event.keyCode) {
     case this.keyCode.SPACE:
@@ -110,7 +110,7 @@ Menubutton.prototype.handleKeydown = function (event) {
 
 Menubutton.prototype.handleClick = function (event) {
   if (this.domNode.getAttribute('aria-expanded') == 'true') {
-    this.popupMenu.close();
+    this.popupMenu.close(true);
   }
   else {
     this.popupMenu.open();

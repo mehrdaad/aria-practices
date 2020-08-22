@@ -7,6 +7,8 @@
 *   Desc:   Menubutton widget that implements ARIA Authoring Practices
 */
 
+'use strict';
+
 /*
 *   @constructor MenuButton
 *
@@ -82,9 +84,7 @@ Menubutton.prototype.init = function () {
 };
 
 Menubutton.prototype.handleKeydown = function (event) {
-  var tgt = event.currentTarget,
-    flag = false,
-    clickEvent;
+  var flag = false;
 
   switch (event.keyCode) {
     case this.keyCode.SPACE:

@@ -1,3 +1,4 @@
+'use strict';
 /**
  * @namespace aria
  */
@@ -12,6 +13,7 @@ aria.KeyCode = {
   BACKSPACE: 8,
   TAB: 9,
   RETURN: 13,
+  SHIFT: 16,
   ESC: 27,
   SPACE: 32,
   PAGE_UP: 33,
@@ -39,7 +41,9 @@ aria.Utils.matches = function (element, selector) {
       function (s) {
         var matches = element.parentNode.querySelectorAll(s);
         var i = matches.length;
-        while (--i >= 0 && matches.item(i) !== this) {}
+        while (--i >= 0 && matches.item(i) !== this) {
+          // empty
+        }
         return i > -1;
       };
   }
@@ -60,8 +64,8 @@ aria.Utils.remove = function (item) {
 };
 
 aria.Utils.isFocusable = function (element) {
-  if (element.tabIndex > 0 || (element.tabIndex === 0 && element.getAttribute('tabIndex') !== null)) {
-    return true;
+  if (element.tabIndex < 0) {
+    return false;
   }
 
   if (element.disabled) {
@@ -72,7 +76,7 @@ aria.Utils.isFocusable = function (element) {
     case 'A':
       return !!element.href && element.rel != 'ignore';
     case 'INPUT':
-      return element.type != 'hidden' && element.type != 'file';
+      return element.type != 'hidden';
     case 'BUTTON':
     case 'SELECT':
     case 'TEXTAREA':
@@ -116,4 +120,11 @@ aria.Utils.addClass = function (element, className) {
 aria.Utils.removeClass = function (element, className) {
   var classRegex = new RegExp('(\\s|^)' + className + '(\\s|$)');
   element.className = element.className.replace(classRegex, ' ').trim();
+};
+
+aria.Utils.bindMethods = function (object /* , ...methodNames */) {
+  var methodNames = Array.prototype.slice.call(arguments, 1);
+  methodNames.forEach(function (method) {
+    object[method] = object[method].bind(object);
+  });
 };

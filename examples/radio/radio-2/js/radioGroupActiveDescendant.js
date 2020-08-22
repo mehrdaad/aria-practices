@@ -7,6 +7,8 @@
 *   Desc:   Radio group widget using aria-activedescendant that implements ARIA Authoring Practices
 */
 
+'use strict';
+
 /*
 *   @constructor radioGroupActiveDescendent
 *
@@ -52,9 +54,6 @@ RadioGroup.prototype.init = function () {
     var rb = new RadioButtonActiveDescendant(rbs[i], this);
     rb.init();
     this.radioButtons.push(rb);
-
-    console.log(rb);
-
     if (!this.firstRadioButton) {
       this.firstRadioButton = rb;
     }
@@ -118,14 +117,11 @@ RadioGroup.prototype.getCurrentRadioButton = function () {
 // Event Handlers
 
 RadioGroup.prototype.handleKeydown = function (event) {
-  var tgt = event.currentTarget,
-    flag = false,
-    clickEvent;
+  var flag = false;
 
   var currentItem = this.getCurrentRadioButton();
   switch (event.keyCode) {
     case this.keyCode.SPACE:
-    case this.keyCode.RETURN:
       this.setChecked(currentItem);
       flag = true;
       break;
@@ -160,12 +156,12 @@ RadioGroup.prototype.handleKeydown = function (event) {
   }
 };
 
-RadioGroup.prototype.handleFocus = function (event) {
+RadioGroup.prototype.handleFocus = function () {
   var currentItem = this.getCurrentRadioButton();
   currentItem.domNode.classList.add('focus');
 };
 
-RadioGroup.prototype.handleBlur = function (event) {
+RadioGroup.prototype.handleBlur = function () {
   var currentItem = this.getCurrentRadioButton();
   currentItem.domNode.classList.remove('focus');
 };

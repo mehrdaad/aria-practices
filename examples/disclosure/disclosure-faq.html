@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<title>Example Disclosure (Show/Hide) for Answers to Frequently Asked Questions | WAI-ARIA Authoring
-  Practices 1.1</title>
+<title>Example Disclosure (Show/Hide) for Answers to Frequently Asked Questions | WAI-ARIA Authoring Practices 1.2</title>
 
   <!--  Core js and css shared by all examples; do not modify when using this template. -->
   <link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/2016/base.css">
@@ -18,6 +17,14 @@
 
 </head>
 <body>
+  <nav aria-label="Related Links" class="feedback">
+    <ul>
+      <li><a href="../../#browser_and_AT_support">Browser and Assistive Technology Support</a></li>
+      <li><a href="https://github.com/w3c/aria-practices/issues/new">Report Issue</a></li>
+      <li><a href="https://github.com/w3c/aria-practices/projects/14">Related Issues</a></li>
+      <li><a href="../../#disclosure">Design Pattern</a></li>
+    </ul>
+  </nav>
   <main>
   <h1>Example Disclosure (Show/Hide) for Answers to Frequently Asked Questions</h1>
   <p>
@@ -30,6 +37,9 @@
     <li>
       <a href="disclosure-img-long-description.html">Example Disclosure (Show/Hide) for an Image Description</a>
     </li>
+    <li>
+      <a href="disclosure-navigation.html">Example Disclosure for Navigation Menus</a>
+    </li>
   </ul>
   <section>
     <h2 id="ex_label">Example</h2>
@@ -37,7 +47,7 @@
     <div id="ex1">
       <dl class="faq">
         <dt>
-          <button aria-expanded="false" aria-controls="faq1_desc">What do I do if I have a permit for an assigned lot, but can't find a space there?</button>
+          <button type="button" aria-expanded="false" aria-controls="faq1_desc">What do I do if I have a permit for an assigned lot, but can't find a space there?</button>
         </dt>
         <dd>
           <p id="faq1_desc" class="desc">
@@ -47,7 +57,7 @@
           </p>
         </dd>
         <dt>
-          <button aria-expanded="false" aria-controls="faq2_desc">What do I do if I lose my permit or if my permit is stolen?</button>
+          <button type="button" aria-expanded="false" aria-controls="faq2_desc">What do I do if I lose my permit or if my permit is stolen?</button>
         </dt>
         <dd>
           <p id="faq2_desc" class="desc">You should come to the Parking office and report the
@@ -57,7 +67,7 @@
           </p>
         </dd>
         <dt>
-          <button aria-expanded="false" aria-controls="faq3_desc">Is there free parking on holidays?</button>
+          <button type="button" aria-expanded="false" aria-controls="faq3_desc">Is there free parking on holidays?</button>
         </dt>
         <dd>
           <p id="faq3_desc" class="desc">
@@ -68,7 +78,7 @@
           </p>
         </dd>
         <dt>
-          <button aria-expanded="false" aria-controls="faq4_desc">Do all parking facilities have the same enforcement rules?</button>
+          <button type="button" aria-expanded="false" aria-controls="faq4_desc">Do all parking facilities have the same enforcement rules?</button>
         </dt>
         <dd>
           <p id="faq4_desc" class="desc">
@@ -89,7 +99,7 @@
         So that the list structure is communicated to assistive technologies, instead of applying a button role to the <code>dt</code> element, a <code>button</code> element is contained within the <code>dd</code> element.
         Similarly, the container for the answer content that is shown and hidden is inside of the <code>dd</code> element so the <code>dl</code> structure is complete even when the answers are all hidden.
       </li>
-      <li> The visual indication of expanded and collapsed states is synchronized with the value of <code>aria-expanded</code> using a CSS atribute selector and <code>:before</code> pseudo element that generates an image with the <code>content</code> property.</li>
+      <li> The visual indication of expanded and collapsed states is synchronized with the value of <code>aria-expanded</code> using a CSS attribute selector and <code>:before</code> pseudo element that generates an image with the <code>content</code> property.</li>
       <li>The interactivity of the question is visually indicated on focus and hover:
         <ul>
           <li>The CSS <code>:focus</code> pseudo class is used to change the background and border colors.</li>
@@ -109,7 +119,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
+        <tr data-test-id="key-tab">
           <th>
             <kbd>Tab</kbd>
           </th>
@@ -117,7 +127,7 @@
               Moves keyboard focus to the disclosure button.
           </td>
         </tr>
-        <tr>
+        <tr data-test-id="key-enter-or-space">
           <th>
             <kbd>Space</kbd> or <br />
             <kbd>Enter</kbd>
@@ -143,7 +153,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
+        <tr data-test-id="button-aria-controls">
           <td></td>
           <th scope="row">
             <code>aria-controls=&quot;IDREF&quot;</code>
@@ -155,7 +165,7 @@
                 The disclosure button controls visibility of the container identified by the <code>IDREF</code> value.
           </td>
         </tr>
-        <tr>
+        <tr data-test-id="button-aria-expanded">
           <td></td>
           <th scope="row">
             <code>aria-expanded=&quot;false&quot;</code>
@@ -180,7 +190,7 @@
             </ul>
           </td>
         </tr>
-        <tr>
+        <tr data-test-id="button-aria-expanded">
           <td></td>
           <th scope="row">
             <code>aria-expanded=&quot;true&quot;</code>
@@ -236,8 +246,7 @@
   </section>
   </main>
   <nav>
-    <a href="../../#disclosure">Disclosure (Show/Hide) Design Pattern in WAI-ARIA Authoring
-      Practices 1.1</a>
+    <a href="../../#disclosure">Disclosure (Show/Hide) Design Pattern in WAI-ARIA Authoring Practices 1.2</a>
   </nav>
 </body>
 </html>

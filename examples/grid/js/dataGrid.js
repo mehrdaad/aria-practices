@@ -3,6 +3,8 @@
 *   https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document
 */
 
+'use strict';
+
 /**
  * @namespace aria
  */
@@ -62,6 +64,10 @@ aria.Grid = function (gridNode) {
 
   this.keysIndicator = document.getElementById('arrow-keys-indicator');
 
+  aria.Utils.bindMethods(this,
+    'checkFocusChange', 'checkPageChange', 'checkRestructureGrid',
+    'delegateButtonHandler', 'focusClickedCell', 'restructureGrid',
+    'showKeysIndicator', 'hideKeysIndicator');
   this.setupFocusGrid();
   this.setFocusPointer(0, 0);
 
@@ -143,9 +149,9 @@ aria.Grid.prototype.setFocusPointer = function (row, col) {
   }
 
   this.grid[row][col]
-    .removeEventListener('focus', this.showKeysIndicator.bind(this));
+    .removeEventListener('focus', this.showKeysIndicator);
   this.grid[row][col]
-    .removeEventListener('blur', this.hideKeysIndicator.bind(this));
+    .removeEventListener('blur', this.hideKeysIndicator);
 
   // Disable navigation if focused on an input
   this.navigationDisabled = aria.Utils.matches(this.grid[row][col], 'input');
@@ -155,9 +161,9 @@ aria.Grid.prototype.setFocusPointer = function (row, col) {
   this.focusedCol = col;
 
   this.grid[row][col]
-    .addEventListener('focus', this.showKeysIndicator.bind(this));
+    .addEventListener('focus', this.showKeysIndicator);
   this.grid[row][col]
-    .addEventListener('blur', this.hideKeysIndicator.bind(this));
+    .addEventListener('blur', this.hideKeysIndicator);
 
   return true;
 };
@@ -206,23 +212,23 @@ aria.Grid.prototype.isHidden = function (row, col) {
  *  Clean up grid events
  */
 aria.Grid.prototype.clearEvents = function () {
-  this.gridNode.removeEventListener('keydown', this.checkFocusChange.bind(this));
-  this.gridNode.removeEventListener('keydown', this.delegateButtonHandler.bind(this));
-  this.gridNode.removeEventListener('click', this.focusClickedCell.bind(this));
-  this.gridNode.removeEventListener('click', this.delegateButtonHandler.bind(this));
+  this.gridNode.removeEventListener('keydown', this.checkFocusChange);
+  this.gridNode.removeEventListener('keydown', this.delegateButtonHandler);
+  this.gridNode.removeEventListener('click', this.focusClickedCell);
+  this.gridNode.removeEventListener('click', this.delegateButtonHandler);
 
   if (this.paginationEnabled) {
-    this.gridNode.removeEventListener('keydown', this.checkPageChange.bind(this));
+    this.gridNode.removeEventListener('keydown', this.checkPageChange);
   }
 
   if (this.shouldRestructure) {
-    window.removeEventListener('resize', this.checkRestructureGrid.bind(this));
+    window.removeEventListener('resize', this.checkRestructureGrid);
   }
 
   this.grid[this.focusedRow][this.focusedCol]
-    .removeEventListener('focus', this.showKeysIndicator.bind(this));
+    .removeEventListener('focus', this.showKeysIndicator);
   this.grid[this.focusedRow][this.focusedCol]
-    .removeEventListener('blur', this.hideKeysIndicator.bind(this));
+    .removeEventListener('blur', this.hideKeysIndicator);
 };
 
 /**
@@ -232,17 +238,17 @@ aria.Grid.prototype.clearEvents = function () {
 aria.Grid.prototype.registerEvents = function () {
   this.clearEvents();
 
-  this.gridNode.addEventListener('keydown', this.checkFocusChange.bind(this));
-  this.gridNode.addEventListener('keydown', this.delegateButtonHandler.bind(this));
-  this.gridNode.addEventListener('click', this.focusClickedCell.bind(this));
-  this.gridNode.addEventListener('click', this.delegateButtonHandler.bind(this));
+  this.gridNode.addEventListener('keydown', this.checkFocusChange);
+  this.gridNode.addEventListener('keydown', this.delegateButtonHandler);
+  this.gridNode.addEventListener('click', this.focusClickedCell);
+  this.gridNode.addEventListener('click', this.delegateButtonHandler);
 
   if (this.paginationEnabled) {
-    this.gridNode.addEventListener('keydown', this.checkPageChange.bind(this));
+    this.gridNode.addEventListener('keydown', this.checkPageChange);
   }
 
   if (this.shouldRestructure) {
-    window.addEventListener('resize', this.checkRestructureGrid.bind(this));
+    window.addEventListener('resize', this.checkRestructureGrid);
   }
 };
 
@@ -521,8 +527,8 @@ aria.Grid.prototype.handleSort = function (headerNode) {
   var comparator = function (row1, row2) {
     var row1Text = row1.children[columnIndex].innerText;
     var row2Text = row2.children[columnIndex].innerText;
-    var row1Value = parseInt(row1Text.replace(/[^0-9\.]+/g, ''));
-    var row2Value = parseInt(row2Text.replace(/[^0-9\.]+/g, ''));
+    var row1Value = parseInt(row1Text.replace(/[^0-9.]+/g, ''));
+    var row2Value = parseInt(row2Text.replace(/[^0-9.]+/g, ''));
 
     if (sortType === aria.SortType.ASCENDING) {
       return row1Value - row2Value;
@@ -588,8 +594,13 @@ aria.Grid.prototype.setupIndices = function () {
  *  accordingly.
  */
 aria.Grid.prototype.setupPagination = function () {
+  this.onPaginationChange = this.onPaginationChange || function () {};
   this.perPage = parseInt(this.gridNode.getAttribute('data-per-page'));
   this.showFromRow(0, true);
+};
+
+aria.Grid.prototype.setPaginationChangeHandler = function (onPaginationChange) {
+  this.onPaginationChange = onPaginationChange;
 };
 
 /**
@@ -605,22 +616,27 @@ aria.Grid.prototype.checkPageChange = function (event) {
   }
 
   var key = event.which || event.keyCode;
-  var startIndex;
 
-  if (key === aria.KeyCode.PAGE_UP || key === aria.KeyCode.PAGE_DOWN) {
+  if (key === aria.KeyCode.PAGE_UP) {
     event.preventDefault();
-
-    if (key === aria.KeyCode.PAGE_UP) {
-      startIndex = Math.max(this.perPage - 1, this.topIndex);
-      this.showFromRow(startIndex, false);
-    }
-    else {
-      startIndex = this.topIndex + this.perPage - 1;
-      this.showFromRow(startIndex, true);
-    }
-
-    this.focusCell(startIndex, this.focusedCol);
+    this.movePageUp();
   }
+  else if (key === aria.KeyCode.PAGE_DOWN) {
+    event.preventDefault();
+    this.movePageDown();
+  }
+};
+
+aria.Grid.prototype.movePageUp = function () {
+  var startIndex = Math.max(this.perPage - 1, this.topIndex - 1);
+  this.showFromRow(startIndex, false);
+  this.focusCell(startIndex, this.focusedCol);
+};
+
+aria.Grid.prototype.movePageDown = function () {
+  var startIndex = this.topIndex + this.perPage;
+  this.showFromRow(startIndex, true);
+  this.focusCell(startIndex, this.focusedCol);
 };
 
 /**
@@ -637,6 +653,8 @@ aria.Grid.prototype.showFromRow = function (startIndex, scrollDown) {
   var dataRows =
     this.gridNode.querySelectorAll(aria.GridSelector.SCROLL_ROW);
   var reachedTop = false;
+  var firstIndex = -1;
+  var endIndex = -1;
 
   if (startIndex < 0 || startIndex >= dataRows.length) {
     return;
@@ -661,11 +679,17 @@ aria.Grid.prototype.showFromRow = function (startIndex, scrollDown) {
         this.topIndex = i;
         reachedTop = true;
       }
+
+      if (firstIndex < 0) {
+        firstIndex = i;
+      }
+      endIndex = i;
     }
     else {
       aria.Utils.addClass(dataRows[i], aria.CSSClass.HIDDEN);
     }
   }
+  this.onPaginationChange(firstIndex, endIndex);
 };
 
 /**
@@ -679,7 +703,7 @@ aria.Grid.prototype.checkRestructureGrid = function () {
 
   this.waitingToRestructure = true;
 
-  setTimeout(this.restructureGrid.bind(this), 300);
+  setTimeout(this.restructureGrid, 300);
 };
 
 /**

@@ -7,6 +7,8 @@
 *   Desc:   Popup Menu Menuitem widget that implements ARIA Authoring Practices
 */
 
+'use strict';
+
 /*
 *   @constructor MenuItem
 *
@@ -62,10 +64,8 @@ PopupMenuItem.prototype.init = function () {
 /* EVENT HANDLERS */
 
 PopupMenuItem.prototype.handleKeydown = function (event) {
-  var tgt = event.currentTarget,
-    flag = false,
-    char = event.key,
-    clickEvent;
+  var flag = false,
+    char = event.key;
 
   function isPrintableCharacter (str) {
     return str.length === 1 && str.match(/\S/);
